@@ -1,6 +1,6 @@
 import AuthController from "../../controllers/AuthController"
-import { User } from "../../entities/User"
-import { ResponseResult } from "../../response"
+import { GlobalContext } from "../../GlobalContext"
+import { AuthResponse } from "../../response"
 
 export default {
   UserResult: {
@@ -18,11 +18,15 @@ export default {
       args: {
         email: string,
         password: string
-      }
-    ): Promise<ResponseResult<User>> => {
+      },
+      context: GlobalContext
+    ): Promise<AuthResponse> => {
       // todo
       try {
-        const result = await AuthController.login(args.email, args.password)
+        const result = await AuthController.login(args.email, args.password, context)
+        if (result.token) {
+          return result
+        }
         return {
           message: result.message ? result.message : 'An error occurred'
         }

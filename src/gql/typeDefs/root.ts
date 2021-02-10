@@ -5,6 +5,12 @@ export default gql`
     message: String!
   }
 
+  type AuthResponse {
+    message: String
+    user: User!
+    token: String!
+  }
+
   type Query {
     root: String
   }

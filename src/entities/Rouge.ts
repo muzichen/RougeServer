@@ -1,8 +1,8 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 
 @Entity()
-export class Rouge {
+export class Rouge extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: "bigint"
   })

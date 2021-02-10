@@ -4,13 +4,19 @@ import { ApolloServer } from 'apollo-server-express'
 import connection from './connection'
 import typeDefs from './gql/typeDefs'
 import resolvers from './gql/resolvers'
+import { GlobalContext } from './GlobalContext'
+import { isAuth } from './utils/auth'
 
 const setUp = async () => {
   dotEnv.config()
 
   const apolloServer = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: ({ req, res }: any): GlobalContext => {
+      const payload = isAuth(req)
+      return { req, res, payload }
+    }
   })
   
   const app = express()

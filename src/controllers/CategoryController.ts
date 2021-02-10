@@ -1,8 +1,26 @@
 import { Category } from "../entities/Category"
+import { User } from "../entities/User"
+import { GlobalContext } from "../GlobalContext"
 import { ResponseResult } from "../response"
 
-const create = async (name: string, description: string): Promise<ResponseResult<Category>> => {
+const create = async (name: string, description: string, context: GlobalContext): Promise<ResponseResult<Category>> => {
   try {
+    if (!context.payload) {
+      return {
+        message: '请登录'
+      }
+    }
+    const { id } = context.payload
+    const user = User.findOne({
+      where: {
+        id
+      }
+    })
+    if (!user) {
+      return {
+        message: '请重新登录'
+      }
+    }
     // 通过name获取是否存在已经有此name的分类
     const category = await Category.findOne({
       where: {

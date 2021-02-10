@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt'
 import { User } from "../entities/User";
-import { ResponseResult } from "../response";
+import { GlobalContext } from '../GlobalContext';
+import { AuthResponse } from "../response";
+import { createAccessToken, createRefreshToken } from '../utils/auth';
 
-const login = async (email: string, password: string): Promise<ResponseResult<User>> => {
+const login = async (email: string, password: string, { res }: GlobalContext): Promise<AuthResponse> => {
   if (!email || !password) {
     return {
       message: '邮箱或者密码不能为空'
@@ -19,14 +21,24 @@ const login = async (email: string, password: string): Promise<ResponseResult<Us
     }
   }
   const passwordIsRight = await bcrypt.compare(password, user.password)
-  if (passwordIsRight) {
+
+  if (!passwordIsRight) {
     return {
-      message: '登录成功',
-      entity: user
+      message: '密码有误'
     }
   }
+
+  res.cookie('jrt', createRefreshToken(user), {
+    httpOnly: true
+  })
+
+  // jwt
+  const accessToken = createAccessToken(user)
+
   return {
-    message: '登录失败'
+    message: '登录成功',
+    token: accessToken,
+    user
   }
 }
 

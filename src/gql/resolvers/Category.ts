@@ -1,5 +1,6 @@
 import CategoryController from "../../controllers/CategoryController"
 import { Category } from "../../entities/Category"
+import { GlobalContext } from "../../GlobalContext"
 import { ResponseResult } from "../../response"
 
 export default {
@@ -17,16 +18,14 @@ export default {
       args: {
         name: string,
         description: string
-      }
+      },
+      context: GlobalContext
     ): Promise<ResponseResult<Category>> => {
       console.log(args)
       try {
-        let result = await CategoryController.create(args.name, args.description)
+        let result = await CategoryController.create(args.name, args.description, context)
         if (result.entity) {
-          return {
-            message: '创建成功',
-            entity: result.entity
-          }
+          return result
         }
         return {
           message: result.message ? result.message : 'An error occurred'

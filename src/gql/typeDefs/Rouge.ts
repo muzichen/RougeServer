@@ -5,4 +5,10 @@ export default gql`
     id: ID!
     name: String!
   }
+
+  union RougeResult = Rouge | ResponseResult
+
+  extend type Mutation {
+    createRouge(name: String!): RougeResult
+  }
 `
